@@ -11,23 +11,25 @@ class CustomUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role_num = models.ForeignKey(Role, on_delete=models.DO_NOTHING)
 
-
+class Artist(models.Model):
+    artist_id = models.OneToOneField(CustomUser, on_delete=models.DO_NOTHING,primary_key=True)
+    genre = models.CharField(max_length = 15)
+    band_name = models.CharField(max_length = 60)
 
 class Venue(models.Model):
     venue_id = models.OneToOneField(CustomUser, on_delete=models.DO_NOTHING, primary_key=True)
     seat_rows = models.PositiveIntegerField()
     seat_cols = models.PositiveIntegerField()
-
-    address = models.CharField(max_length= 75)
-    mpoly = models.PointField()
+    venue_name = models.CharField(max_length = 100)
+    address = models.CharField(max_length= 100)
+    location = models.PointField()
 
 class Concert(models.Model):
     concert_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    concert_name = models.CharField(max_length=200)
     venue_id = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
-    artist_id = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
+    artist_id = models.ForeignKey(Artist, on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField()
-    class Meta:
-        unique_together = [["artist_id", "date_time"]]
 
 class Ticket(models.Model):
     ticket_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -37,7 +39,7 @@ class Ticket(models.Model):
     seat_row = models.PositiveIntegerField()
     seat_col = models.PositiveIntegerField()
     class Meta:
-        unique_together = [["seat_col", "seat_col", "concert_id"]]
+        unique_together = [["seat_col", "seat_row", "concert_id"]]
 
 
 class SeatRank(models.Model):

@@ -4,6 +4,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r"roles", views.RoleViewSet)
+router.register(r"admin", views.AdminViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

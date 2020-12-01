@@ -1,0 +1,23 @@
+[
+{
+    "model": "venue_system.role",
+    "pk": 1,
+    "fields": {
+        "role": "venue owner"
+    }
+},
+{
+    "model": "venue_system.role",
+    "pk": 2,
+    "fields": {
+        "role": "customer"
+    }
+},
+{
+    "model": "venue_system.role",
+    "pk": 3,
+    "fields": {
+        "role": "artist"
+    }
+}
+]
