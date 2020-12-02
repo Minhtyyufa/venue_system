@@ -1,7 +1,7 @@
 import json
 import requests
 import pprint
-from .models import Venue, CustomUser, Role, Artist, Concert
+from .models import Venue, CustomUser, Role, Artist, Concert, Ticket
 import uuid
 from django.contrib.auth.models import User
 import numpy as np
@@ -18,7 +18,7 @@ def add_concert(concert_data, artist, venue):
     return Concert(concert_id = concert_id, concert_name= concert_name, date_time = date_time, venue_id = venue, artist_id= artist)
 
 def add_artist(artist_data):
-    artist_user = User(username = artist_data["slug"], password = "CooperCU2021!!!")
+    artist_user = User(username = artist_data["slug"] + "-artist", password = "CooperCU2021!!!")
     artist_user.save()
 
     role_num = Role.objects.get(role="artist")
@@ -28,13 +28,14 @@ def add_artist(artist_data):
         genre = ""
     else:
         genre = artist_data["genres"][0]["name"]
+
     artist = Artist(genre = genre, band_name = artist_data["short_name"], artist_id = cust_user)
     return artist
 
 
 
 def add_venue(venue_data):
-    venue_user = User(username= venue_data["slug"], password = "CooperCU2021!!!")
+    venue_user = User(username= venue_data["slug"] + "-venue", password = "CooperCU2021!!!")
     venue_user.save()
 
     role_num = Role.objects.get(role="venue owner")
@@ -56,11 +57,21 @@ def add_venue(venue_data):
 
     return venue
 
+def add_tickets(seat_rows, seat_cols,score, concert):
+    ticket_price = int(10*(score*400 + 10))
+    tickets = []
+    for seat_row in range(1, seat_rows + 1):
+        for seat_col in range(1, seat_cols +1):
+            tickets.append(Ticket(ticket_id = uuid.uuid4(), concert_id = concert, customer_id = None, price = ticket_price,
+                                  seat_col = seat_col, seat_row = seat_row))
+
+    return tickets
+
 
 
 @transaction.atomic
 def populate_database(limit = 30000):
-    with open("./venue_system/bleh.json") as json_file:
+    with open("./venue_system/config.json") as json_file:
         data = json.load(json_file)
     r = requests.get(
         'https://api.seatgeek.com/2/events?datetime_utc.gt=2012-09-07&type=concert&per_page=1&format=json&venue.country=US',
@@ -72,6 +83,7 @@ def populate_database(limit = 30000):
     venues = {}
     concert_ids = set()
     concert_list = []
+    tickets = []
     while i*1000 < total_events and i*1000 < limit:
         r = requests.get(
             'https://api.seatgeek.com/2/events?datetime_utc.gt=2012-09-07&type=concert&per_page=1000&format=json&venue.country=US&page=' + str(i),
@@ -93,7 +105,10 @@ def populate_database(limit = 30000):
                 venue = add_venue(concert["venue"])
                 venues[concert["venue"]["id"]] = venue
 
-            concert_list.append(add_concert(concert, artist, venue))
+            concert_obj = add_concert(concert, artist, venue)
+            concert_list.append(concert_obj)
+            tickets += add_tickets(venue.seat_cols, venue.seat_rows, concert["performers"][0]["score"] ,concert_obj)
+
             concert_ids.add(concert["id"])
 
         i += 1

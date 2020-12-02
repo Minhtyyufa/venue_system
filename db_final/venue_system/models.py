@@ -14,7 +14,7 @@ class CustomUser(models.Model):
 class Artist(models.Model):
     artist_id = models.OneToOneField(CustomUser, on_delete=models.DO_NOTHING,primary_key=True)
     genre = models.CharField(max_length = 15)
-    band_name = models.CharField(max_length = 60)
+    band_name = models.CharField(max_length = 100)
 
 class Venue(models.Model):
     venue_id = models.OneToOneField(CustomUser, on_delete=models.DO_NOTHING, primary_key=True)
