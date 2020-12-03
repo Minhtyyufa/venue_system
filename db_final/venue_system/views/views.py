@@ -3,15 +3,29 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 from rest_framework import viewsets
-from venue_system.serializers import RoleSerializer
-from venue_system.models import Role
+from rest_framework.generics import ListCreateAPIView
+from venue_system.serializers import RoleSerializer, UserSerializer, CustomUserSerializer
+from venue_system.models import Role, CustomUser
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from venue_system.populate_database import populate_database
 from venue_system.helpers.message import Message
 from venue_system.helpers.errors import TestException, BaseError
+from django.contrib.auth.models import User
 
+class CustomUserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
 
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all().order_by("role")
     serializer_class = RoleSerializer

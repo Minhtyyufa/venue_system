@@ -6,5 +6,8 @@ class BaseError(Exception):
 class TestException(BaseError):
     pass
 
-class InsufficientFields(BaseError):
+class InsufficientFieldsException(BaseError):
+    pass
+
+class WrongAccountTypeException(BaseError):
     pass

@@ -1,16 +1,22 @@
 from rest_framework import serializers
 
 from .models import Role, Venue, Artist, CustomUser, Concert, Ticket, SeatRank
+from django.contrib.auth.models import User
 
 class RoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Role
         fields = ("role", "role_num")
 
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username")
+
 class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ("user", "role_num")
+        fields = ("user", "role_num","url")
 
 class ArtistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -18,9 +24,11 @@ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("genre", "band_name")
 
 class VenueSerializer(serializers.HyperlinkedModelSerializer):
+    venue_id = serializers.HyperlinkedRelatedField(view_name='custom_user-detail', queryset=CustomUser.objects.filter(role_num= 1))
+
     class Meta:
         model = Venue
-        fields = ("venue_id", "seat_rows", "seat_cols", "venue_name", "address", "location")
+        fields = ("venue_id", "seat_rows", "seat_cols", "venue_name", "address", "location", "url")
 
 class ConcertSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
