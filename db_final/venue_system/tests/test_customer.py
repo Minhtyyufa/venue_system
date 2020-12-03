@@ -37,8 +37,10 @@ class CustomerTestCase(APITestCase):
         response = self.client.post("/venue_system/customer/create_customer/", data=user_data, format="json")
 
         self.assertEqual(
-            {'msg': {'message': 'Successfully created an account',
-                     'payload': {'user': 'http://testserver/venue_system/user/1/',
-                                 'role_num': 'http://testserver/venue_system/admin/2/',
-                                 'url': 'http://testserver/venue_system/customer/1/'}}, 'err': {}},
+            {'err': {},
+             'msg': {'message': 'Successfully created an account',
+                     'payload': {'id': 1,
+                                 'role_num': {'role': 'customer', 'role_num': 2},
+                                 'user': {'username': 'test_customer'}}}}
+            ,
             response.json())

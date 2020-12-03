@@ -27,7 +27,9 @@ class VenueViewSet(viewsets.ModelViewSet):
             pprint.pprint(user_data)
             if user_data.keys() < {"username", "password", "role_num", "seat_rows", "seat_cols", "venue_name", "address", "location"}:
                 raise InsufficientFieldsException("Please provide all of the user fields: username, password, role_num, seat_rows, seat_cols, venue_name, address, location")
-            if user_data["role_num"] != 3:
+            if user_data["location"].keys() < {"lon", "lat"}:
+                raise InsufficientFieldsException("Please provide all of the location fields: lon, lat")
+            if user_data["role_num"] != 1:
                 raise WrongAccountTypeException("Wrong Role number provided for customer: role_num provided" + str(user_data["role_num"]) )
 
             user = self.venue_service.create_venue(user_data)

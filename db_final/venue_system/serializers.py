@@ -3,44 +3,47 @@ from rest_framework import serializers
 from .models import Role, Venue, Artist, CustomUser, Concert, Ticket, SeatRank
 from django.contrib.auth.models import User
 
-class RoleSerializer(serializers.HyperlinkedModelSerializer):
+class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ("role", "role_num")
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username")
+        fields = ["username"]
 
-class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = CustomUser
-        fields = ("user", "role_num","url")
+        fields = '__all__'
+        depth = 1
 
-class ArtistSerializer(serializers.HyperlinkedModelSerializer):
+class ArtistSerializer(serializers.ModelSerializer):
+    artist_id = CustomUserSerializer()
     class Meta:
         model = Artist
-        fields = ("genre", "band_name")
-
-class VenueSerializer(serializers.HyperlinkedModelSerializer):
-    venue_id = serializers.HyperlinkedRelatedField(view_name='custom_user-detail', queryset=CustomUser.objects.filter(role_num= 1))
-
+        fields = "__all__"
+        depth = 2
+class VenueSerializer(serializers.ModelSerializer):
+    venue_id = CustomUserSerializer()
     class Meta:
         model = Venue
-        fields = ("venue_id", "seat_rows", "seat_cols", "venue_name", "address", "location", "url")
+        fields = "__all__"
+        depth = 2
 
-class ConcertSerializer(serializers.HyperlinkedModelSerializer):
+class ConcertSerializer(serializers.ModelSerializer):
     class Meta:
         model = Concert
         fields = ("concert_id", "concert_name", "venue_id", "artist_id", "date_time")
 
-class TicketSerializer(serializers.HyperlinkedModelSerializer):
+class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("ticket_id", "concert_id", "customer_id", "price", "seat_row", "seat_col")
 
-class SeatRankSerializer(serializers.HyperlinkedModelSerializer):
+class SeatRankSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeatRank
         fields = ("seat_rank_id", "venue_id", "seat_rank", "row", "col", "price")
