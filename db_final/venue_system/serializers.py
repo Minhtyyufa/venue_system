@@ -14,10 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["username"]
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    #user = UserSerializer()
     class Meta:
         model = CustomUser
-        fields = '__all__'
+        fields = ["id"]
         depth = 1
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -34,10 +34,12 @@ class VenueSerializer(serializers.ModelSerializer):
         depth = 2
 
 class ConcertSerializer(serializers.ModelSerializer):
+    artist_id = ArtistSerializer()
+    venue_id = VenueSerializer()
     class Meta:
         model = Concert
         fields = ("concert_id", "concert_name", "venue_id", "artist_id", "date_time")
-
+        depth = 2
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket

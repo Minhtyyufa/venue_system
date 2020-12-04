@@ -1,4 +1,5 @@
 from venue_system.models import CustomUser, User, Role, Venue
+from venue_system.helpers.errors import DatabaseError
 
 class VenueRepo():
     def __init__(self):
@@ -13,5 +14,12 @@ class VenueRepo():
 
         venue = Venue(venue_name=venue_data["venue_name"], address=venue_data["address"], seat_rows = venue_data["seat_rows"],
                       seat_cols = venue_data["seat_cols"], location = venue_data["location"], venue_id = cust_user)
-
+        venue.save()
         return venue
+
+    def get_venue_by_id(self, venue_id):
+        try:
+            venue = Venue.objects.get(venue_id=venue_id)
+            return venue
+        except Exception as e:
+            raise DatabaseError(e.__class__.__name__ + ": in venue_repo")

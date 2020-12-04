@@ -3,8 +3,10 @@ from rest_framework import routers
 from .views import views
 from venue_system.views.customer_view import CustomerViewSet
 from venue_system.views.venue_view import VenueViewSet
+from venue_system.views.artist_view import ArtistViewSet
 
 router = routers.DefaultRouter()
+router.register(r"artist", ArtistViewSet)
 router.register(r"custom_user", views.CustomUserViewSet)
 router.register(r"venue", VenueViewSet)
 router.register(r"customer", CustomerViewSet)
