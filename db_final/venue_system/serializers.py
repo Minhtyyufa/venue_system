@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Role, Venue, Artist, CustomUser, Concert, Ticket, SeatRank
+from .models import Role, Venue, Artist, CustomUser, Concert, Ticket, SeatRank, CreditCard
 from django.contrib.auth.models import User
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -43,9 +43,14 @@ class ConcertSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ("ticket_id", "concert_id", "customer_id", "price", "seat_row", "seat_col")
+        fields = "__all__"
 
 class SeatRankSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeatRank
         fields = ("seat_rank_id", "venue_id", "seat_rank", "row", "col", "price")
+
+class CreditCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CreditCard
+        fields = "__all__"

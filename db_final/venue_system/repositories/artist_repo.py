@@ -6,7 +6,7 @@ class ArtistRepo():
         pass
     def create_artist(self, artist_data):
         try:
-            user = User(username=artist_data["username"], password=artist_data["password"])
+            user = User.objects.create_user(username=artist_data["username"], password=artist_data["password"])
             user.save()
 
             role_num = Role.objects.get(role_num=artist_data["role_num"])

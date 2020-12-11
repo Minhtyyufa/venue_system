@@ -83,14 +83,15 @@ def populate_database(limit = 30000):
     venues = {}
     concert_ids = set()
     concert_list = []
-    tickets = []
     while i*1000 < total_events and i*1000 < limit:
+        print("on page = " +str(i))
         r = requests.get(
             'https://api.seatgeek.com/2/events?datetime_utc.gt=2012-09-07&type=concert&per_page=1000&format=json&venue.country=US&page=' + str(i),
             auth=(data["client_id"], data["client_secret"]))
 
         concerts = r.json()["events"]
         for concert in concerts:
+            print("bleh")
             if concert["id"] in concert_ids:
                 continue
             if concert["performers"][0]["id"] in artists:
@@ -107,8 +108,8 @@ def populate_database(limit = 30000):
 
             concert_obj = add_concert(concert, artist, venue)
             concert_list.append(concert_obj)
-            tickets += add_tickets(venue.seat_cols, venue.seat_rows, concert["performers"][0]["score"] ,concert_obj)
-
+            tickets = add_tickets(venue.seat_cols, venue.seat_rows, concert["performers"][0]["score"] ,concert_obj)
+            Ticket.objects.bulk_create(tickets)
             concert_ids.add(concert["id"])
 
         i += 1
@@ -117,3 +118,5 @@ def populate_database(limit = 30000):
     Venue.objects.bulk_create(list(venues.values()))
     Concert.objects.bulk_create(list(concert_list))
 
+if __name__ == "__main__":
+    populate_database()

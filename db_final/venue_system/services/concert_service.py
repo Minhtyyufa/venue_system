@@ -19,7 +19,7 @@ class ConcertService():
         concert_data["concert_id"] = uuid.uuid4()
         concert_data["venue_id"] = self.venue_repo.get_venue_by_id(concert_data["venue_id"])
         concert_data["artist_id"] = self.artist_repo.get_artist_by_id(concert_data["artist_id"])
-        concert  = self.concert_repo.create_concert(concert_data)
+        concert = self.concert_repo.create_concert(concert_data)
 
         tickets = []
         for i in range(1, concert_data["venue_id"].seat_cols + 1):
@@ -32,3 +32,6 @@ class ConcertService():
         self.ticket_repo.bulk_insert_tickets(tickets)
 
         return concert
+
+    def find_concerts(self, query_params):
+        return self.concert_repo.find_concerts(query_params)

@@ -13,4 +13,4 @@ class SeatRankRepo():
             else:
                 return None
         except Exception as e:
-            raise DatabaseError(e.__class__.__name__ + ": in ticket_repo")
+            raise DatabaseError(e.__class__.__name__ + ": in seat_rank_repo")

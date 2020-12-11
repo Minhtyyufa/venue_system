@@ -51,7 +51,7 @@ class VenueViewSet(viewsets.ModelViewSet):
         try:
             concert_data = request.data
             if concert_data.keys() < {"concert_name", "venue_id", "artist_id", "date_time", "default_price"}:
-                InsufficientFieldsException("Please provide all of the concert fields: concert_name, venue_id, artist_id, date_time")
+                raise InsufficientFieldsException("Please provide all of the concert fields: concert_name, venue_id, artist_id, date_time")
             try:
                 concert_data["venue_id"] = int(concert_data["venue_id"])
                 concert_data["artist_id"] = int(concert_data["artist_id"])
