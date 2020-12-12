@@ -5,6 +5,8 @@ from venue_system.repositories.ticket_repo import TicketRepo
 from venue_system.repositories.seat_rank_repo import SeatRankRepo
 from django.db import transaction
 import uuid
+import datetime
+import pytz
 
 class ConcertService():
     def __init__(self):
@@ -34,4 +36,6 @@ class ConcertService():
         return concert
 
     def find_concerts(self, query_params):
-        return self.concert_repo.find_concerts(query_params)
+        new_params = dict(query_params)
+        new_params["start_date"] = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        return self.concert_repo.find_concerts(new_params)

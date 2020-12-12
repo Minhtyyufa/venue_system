@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from rest_framework import viewsets
-from venue_system.serializers import CustomUserSerializer, TicketSerializer, ConcertSerializer
+from venue_system.serializers import CustomUserSerializer, TicketSerializer, AvailableTicketSerializer, ConcertSerializer
 from venue_system.models import CustomUser, Ticket
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
@@ -106,7 +106,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
             concert_id = request.query_params["concert_id"]
             tickets = self.customer_service.get_tickets_by_concert_id(concert_id)
 
-            serializer = TicketSerializer(tickets, many=True)
+            serializer = AvailableTicketSerializer(tickets, many=True)
 
             message.add_payload("Successfully retrieved ticket", serializer.data)
 
@@ -120,9 +120,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
     def find_concerts(self, request):
         message = Message()
         try:
-            if request.query_params.keys() < {"start_date"}:
-                raise InsufficientFieldsException("Please provide a start_date provided")
-
             concerts = self.concert_service.find_concerts(request.query_params)
             serializer = ConcertSerializer(concerts, many=True)
 

@@ -8,7 +8,7 @@ from venue_system.serializers import RoleSerializer, UserSerializer, CustomUserS
 from venue_system.models import Role, CustomUser, Ticket
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
-from venue_system.populate_database import populate_database
+from venue_system.populate_database import populate_database, add_tickets_to_concerts
 from venue_system.helpers.message import Message
 from venue_system.helpers.errors import TestException, BaseError
 from django.contrib.auth.models import User
@@ -63,7 +63,8 @@ class AdminViewSet(viewsets.ModelViewSet):
     def populate_database(self, request):
         populate_database()
         return(Response("Done"))
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
+    @action(detail=False, url_path="add_tickets_to_concerts", url_name="add_tickets_to_concerts")
+    def add_tickets_to_concerts(self, request):
+        print(len(Ticket.objects.all()))
+        # add_tickets_to_concerts()
+        return(Response("Done"))

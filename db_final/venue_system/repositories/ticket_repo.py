@@ -31,7 +31,7 @@ class TicketRepo():
 
     def get_tickets_by_concert_id(self, concert_id):
         try:
-            return Ticket.objects.all().filter(concert_id=concert_id)
+            return Ticket.objects.all().filter(concert_id=concert_id).order_by("seat_row", "seat_col")
         except Exception as e:
             raise DatabaseError(e.__class__.__name__ + ": in ticket_repo")
 

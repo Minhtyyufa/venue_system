@@ -24,13 +24,15 @@ class ConcertRepo():
                 # if k == "genre":
                 #     concerts["artist_id__genre__contains"] = v
                 # elif k == ""
-                if k == "end_date":
-                    concerts["date_time__lte"] = v
-                elif k=="start_date":
+                if k == "start_date":
                     continue
+                elif v[0] == "":
+                    continue
+                elif k == "end_date":
+                    concerts["date_time__lte"] = v[0]
                 else:
-                    concerts[k+"__contains"] = v
-
+                    concerts[k+"__icontains"] = v[0]
+            print(concerts)
             return Concert.objects.filter(**concerts).order_by("date_time", "concert_name")
         except Exception as e:
             raise DatabaseError(e.__class__.__name__ + ": in concert_repo")

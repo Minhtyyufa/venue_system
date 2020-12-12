@@ -1,5 +1,6 @@
 from rest_framework import serializers
-
+import datetime
+import pytz
 from .models import Role, Venue, Artist, CustomUser, Concert, Ticket, SeatRank, CreditCard
 from django.contrib.auth.models import User
 
@@ -54,3 +55,11 @@ class CreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditCard
         fields = "__all__"
+
+class AvailableTicketSerializer(serializers.ModelSerializer):
+    is_available = serializers.SerializerMethodField("get_is_available")
+    def get_is_available(self, obj):
+        return obj.purchased_timestamp == None or (datetime.datetime.utcnow().replace(tzinfo=pytz.utc) >obj.purchased_timestamp and obj.credit_card_id == None)
+    class Meta:
+        model = Ticket
+        fields = ("ticket_id","seat_col", "seat_row", "price", "is_available")

@@ -50,13 +50,19 @@ class VenueViewSet(viewsets.ModelViewSet):
         message = Message()
         try:
             concert_data = request.data
-            if concert_data.keys() < {"concert_name", "venue_id", "artist_id", "date_time", "default_price"}:
+            print(request.user.customuser.role_num.role_num)
+            if request.user.customuser.role_num.role_num != 1:
+                raise WrongAccountTypeException("You're not a venue_owner")
+            if concert_data.keys() < {"concert_name", "artist_id", "date_time", "default_price"}:
                 raise InsufficientFieldsException("Please provide all of the concert fields: concert_name, venue_id, artist_id, date_time")
             try:
-                concert_data["venue_id"] = int(concert_data["venue_id"])
                 concert_data["artist_id"] = int(concert_data["artist_id"])
             except ValueError:
                 raise FieldTypeException("venue_id must be an int")
+            venue = request.user.customuser.venue
+
+            concert_data["venue_id"]=venue
+            pprint.pprint(concert_data)
             concert = self.concert_service.create_concert(concert_data)
 
             serializer=ConcertSerializer(concert)

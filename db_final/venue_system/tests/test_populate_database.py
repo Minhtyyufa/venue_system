@@ -57,7 +57,7 @@ class PopulateTestCase(TestCase):
         self.assertEqual(concert.venue_id, venue)
 
     def test_bulk_inserts(self):
-        populate_database(limit = 3001)
+        populate_database(limit = 30001)
         concert = Concert.objects.filter().first()
         print(len(Concert.objects.all()))
         self.assertGreater(len(Concert.objects.all()), 2000)

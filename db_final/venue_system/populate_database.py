@@ -10,6 +10,8 @@ from django.db import transaction
 import datetime
 import pytz
 from dateutil import parser
+import random
+
 
 def add_concert(concert_data, artist, venue):
     concert_id = uuid.uuid4()
@@ -68,9 +70,16 @@ def add_tickets(seat_rows, seat_cols,score, concert):
     return tickets
 
 
+def add_tickets_to_concerts():
+    i = 1
+    for concert in Concert.objects.all():
+        print("on concert: " + str(i))
+        i+=1
+        tickets = add_tickets(concert.venue_id.seat_rows,concert.venue_id.seat_cols, random.uniform(0, 1), concert)
+        Ticket.objects.bulk_create(tickets)
 
 @transaction.atomic
-def populate_database(limit = 30000):
+def populate_database(limit = 30001):
     with open("./venue_system/config.json") as json_file:
         data = json.load(json_file)
     r = requests.get(
@@ -88,10 +97,10 @@ def populate_database(limit = 30000):
         r = requests.get(
             'https://api.seatgeek.com/2/events?datetime_utc.gt=2012-09-07&type=concert&per_page=1000&format=json&venue.country=US&page=' + str(i),
             auth=(data["client_id"], data["client_secret"]))
-
+        j = 0
         concerts = r.json()["events"]
         for concert in concerts:
-            print("bleh")
+            print("On " + str((i-1)*1000+j))
             if concert["id"] in concert_ids:
                 continue
             if concert["performers"][0]["id"] in artists:
@@ -108,9 +117,10 @@ def populate_database(limit = 30000):
 
             concert_obj = add_concert(concert, artist, venue)
             concert_list.append(concert_obj)
-            tickets = add_tickets(venue.seat_cols, venue.seat_rows, concert["performers"][0]["score"] ,concert_obj)
-            Ticket.objects.bulk_create(tickets)
+            #tickets = add_tickets(venue.seat_cols, venue.seat_rows, concert["performers"][0]["score"] ,concert_obj)
+            #Ticket.objects.bulk_create(tickets)
             concert_ids.add(concert["id"])
+            j+=1
 
         i += 1
 
