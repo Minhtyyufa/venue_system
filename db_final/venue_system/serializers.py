@@ -41,20 +41,26 @@ class ConcertSerializer(serializers.ModelSerializer):
         model = Concert
         fields = ("concert_id", "concert_name", "venue_id", "artist_id", "date_time")
         depth = 2
+
+class CreditCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CreditCard
+        fields = ("credit_card_id","card_nickname")
+
+
 class TicketSerializer(serializers.ModelSerializer):
+    credit_card_id = CreditCardSerializer()
+    customer_id = CustomUserSerializer()
     class Meta:
         model = Ticket
         fields = "__all__"
+        depth = 2
 
 class SeatRankSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeatRank
         fields = ("seat_rank_id", "venue_id", "seat_rank", "row", "col", "price")
 
-class CreditCardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CreditCard
-        fields = "__all__"
 
 class AvailableTicketSerializer(serializers.ModelSerializer):
     is_available = serializers.SerializerMethodField("get_is_available")

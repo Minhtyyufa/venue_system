@@ -13,7 +13,7 @@ router.register(r"ticket", views.TicketViewSet)
 router.register(r"venue", VenueViewSet)
 router.register(r"customer", CustomerViewSet)
 router.register(r"user", views.UserViewSet)
-router.register(r"roles", views.RoleViewSet)
+# router.register(r"roles", views.RoleViewSet)
 router.register(r"admin", views.AdminViewSet)
 
 urlpatterns = [

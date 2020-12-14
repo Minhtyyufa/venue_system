@@ -65,16 +65,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
     def confirm_ticket(self, request):
         message = Message()
         try:
-            '''
-            {
-                "credit_card": {
-                    "new": Bool,
-                    credit card fields,
-                    "credit_card_id"
-                },
-                "ticket_id"
-            }
-            '''
 
             if request.data.keys() < {"credit_card", "ticket_id"}:
                 raise InsufficientFieldsException("Please provide credit card details and ticket_id")
@@ -128,3 +118,21 @@ class CustomerViewSet(viewsets.ModelViewSet):
         except BaseError as e:
             message.add_error(e)
             return Response(message.response)
+
+    @action(detail = False, url_path = "get_my_tickets", url_name = "get_my_tickets", methods= ["get"])
+    def get_my_tickets(self, request):
+        message = Message()
+        try:
+
+            if request.user.customuser.role_num.role_num != 2:
+                raise WrongAccountTypeException(
+                    "Wrong account type, you should be a customer")
+            tickets = self.customer_service.get_my_tickets(request.user.customuser)
+            serializer = TicketSerializer(tickets, many=True)
+
+            message.add_payload("Successfully retrieved tickets", serializer.data)
+            return Response(message.response)
+        except BaseError as e:
+            message.add_error(e)
+            return Response(message.response)
+

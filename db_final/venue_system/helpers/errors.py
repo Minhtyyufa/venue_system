@@ -17,3 +17,6 @@ class FieldTypeException(BaseError):
 
 class DatabaseError(BaseError):
     pass
+
+class TicketReservedAlreadyError(BaseError):
+    pass

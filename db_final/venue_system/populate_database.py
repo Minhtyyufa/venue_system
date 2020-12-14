@@ -20,7 +20,7 @@ def add_concert(concert_data, artist, venue):
     return Concert(concert_id = concert_id, concert_name= concert_name, date_time = date_time, venue_id = venue, artist_id= artist)
 
 def add_artist(artist_data):
-    artist_user = User(username = artist_data["slug"] + "-artist", password = "CooperCU2021!!!")
+    artist_user = User.objects.create_user(username = artist_data["slug"] + "-artist", password = "CU2021!!!")
     artist_user.save()
 
     role_num = Role.objects.get(role="artist")
@@ -37,7 +37,7 @@ def add_artist(artist_data):
 
 
 def add_venue(venue_data):
-    venue_user = User(username= venue_data["slug"] + "-venue", password = "CooperCU2021!!!")
+    venue_user = User.objects.create_user(username= venue_data["slug"] + "-venue", password = "CU2021!!!")
     venue_user.save()
 
     role_num = Role.objects.get(role="venue owner")

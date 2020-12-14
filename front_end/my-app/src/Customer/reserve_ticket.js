@@ -2,11 +2,12 @@ import React from "react";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import { Col, Card, Row} from "react-bootstrap";
+import { Row} from "react-bootstrap";
 import { instanceOf } from "prop-types";
 import { withCookies, Cookies } from "react-cookie";
+import CustNavBar from "../Helpers/Navbar";
+
+
 Array.prototype.reshape = function(rows, cols) {
   var copy = this.slice(0); // Copy all elements.
   this.length = 0; // Clear out existing array.
@@ -29,7 +30,6 @@ class ReserveTicketPage extends React.Component {
   };
   constructor(props) {
     super(props);
-    var d = new Date();
     const urlParams = new URLSearchParams(window.location.search);
     const concert_id = urlParams.get('concert_id');
     
@@ -47,6 +47,43 @@ class ReserveTicketPage extends React.Component {
       tickets: [],
     };
     this.getTickets(concert_id);
+  }
+
+  reserveTicket = (ticket_id) => {
+    const path = "/venue_system/customer/reserve_ticket/";
+  
+    const { cookies } = this.props;
+    fetch(path, {
+      method: "POST",
+      headers: {
+        "Authorization": "Token " + cookies.get("token"),
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "http://localhost:8000",
+        "Access-Control-Allow-Credentials": true,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ticket_id}),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then(
+        (result) => {
+          console.log(result)
+          if (Object.keys(result.err).length !== 0 ) {
+            alert("Sorry that ticket is now unavailable");
+            const urlParams = new URLSearchParams(window.location.search);
+            const concert_id = urlParams.get('concert_id');
+            this.getTickets(concert_id);
+          } else {
+            window.location.href="/customer/buy_ticket/?ticket_id=" +ticket_id;
+          }
+        },
+        (error) => {
+          //this.setMessage("ERROR sending request", "ERROR");
+        }
+      );
   }
 
   getTickets = (concert_id) => {
@@ -71,7 +108,7 @@ class ReserveTicketPage extends React.Component {
         (result) => {
           console.log(result);
           console.log(Object.keys(result.err).length)
-          if (Object.keys(result.err).length != 0 ) {
+          if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {
             var tickets = result.msg.payload
@@ -94,58 +131,22 @@ class ReserveTicketPage extends React.Component {
     this.setState((state) => ({ request: new_request }));
   };
 
-  sendRequest = (event) => {
-    event.preventDefault();
-
-    const path = "/venue_system/customer/find_concerts/";
-    //var url = new URL(path);
-    var query_params = new URLSearchParams(this.state.request).toString();
-    const { cookies } = this.props;
-    fetch(path + "?" + query_params, {
-      method: "GET",
-      headers: {
-        "Authorization": "Token " + cookies.get("token"),
-        "Cache-Control": "no-cache",
-        "Access-Control-Allow-Origin": "http://localhost:8000",
-        "Access-Control-Allow-Credentials": true,
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then(
-        (result) => {
-          console.log(result);
-          console.log(Object.keys(result.err).length)
-          if (Object.keys(result.err).length != 0 ) {
-            console.log("ERROR");
-          } else {
-            this.setState((state) => ({
-              concert_list: result.msg.payload,
-            }));
-          }
-        },
-        (error) => {
-          //this.setMessage("ERROR sending request", "ERROR");
-        }
-      );
-  };
-
+  
   render() {
     let seats = this.state.tickets.map((value, index) => {
 
       let seat_row = value.map((val,i) => {
+        var style;
+        var price;
         if (val.is_available) {
-          var style="outline-primary";
-          var price = <p>Price: ${val.price/100}</p>
+          style="outline-primary";
+          price = <p>Price: ${val.price/100}</p>
         } else {
-          var style="outline-danger";
-          var price = <p>Unavailable</p>
+          style="outline-danger";
+          price = <p>Unavailable</p>
         }
         return(
-        <Button key={val.ticket_id} id={val.ticket_id} variant={style} className="btn-sm">
+        <Button key={val.ticket_id} id={val.ticket_id} variant={style} className="btn-sm" onClick={e => {this.reserveTicket(e.target.id)}}>
           <p>Row: {val.seat_row}, Col: {val.seat_col}</p>
           {price}
         </Button>
@@ -157,27 +158,10 @@ class ReserveTicketPage extends React.Component {
 
     return (
       <>
-        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-          <Navbar.Brand href="/about">Venue System</Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="mr-auto">
-              <Nav.Link href="#features">Features</Nav.Link>
-              <Nav.Link href="#pricing">Pricing</Nav.Link>
-            </Nav>
-            <Nav>
-              <Nav.Link href="#deets">Logout</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
-
+        <CustNavBar />
         <Jumbotron>
           <div style={{ justifyContent: "center", textAlign: "center" }}>
-            <h1>Welcome to Minh's Venue System</h1>
-            <p>Here you can see your tickets and search for concerts</p>
-            <p>
-              <Button variant="primary">Learn more</Button>
-            </p>
+            <h1>Pick a seat and reserve your ticket</h1>
           </div>
         </Jumbotron>
         <Container fluid >

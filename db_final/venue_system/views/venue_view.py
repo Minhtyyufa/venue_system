@@ -93,3 +93,21 @@ class VenueViewSet(viewsets.ModelViewSet):
         except BaseError as e:
             message.add_error(e)
             return Response(message.response, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, url_path="get_my_concerts", url_name="get_my_concerts", methods=["get"])
+    def get_my_concerts(self, request):
+        message = Message()
+
+        try:
+            if request.user.customuser.role_num.role_num != 1:
+                raise WrongAccountTypeException("You're not a venue_owner")
+
+            concerts = self.concert_service.get_concerts_by_venue(request.user.customuser.venue)
+
+            serializer = ConcertSerializer(concerts, many=True)
+            message.add_payload("Successfully retrieved concerts", serializer.data)
+            return Response(message.response)
+
+        except BaseError as e:
+            message.add_error(e)
+            return Response(message.response, status=status.HTTP_400_BAD_REQUEST)

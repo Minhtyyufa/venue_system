@@ -36,3 +36,9 @@ class ConcertRepo():
             return Concert.objects.filter(**concerts).order_by("date_time", "concert_name")
         except Exception as e:
             raise DatabaseError(e.__class__.__name__ + ": in concert_repo")
+
+    def get_concerts_by_venue(self, venue):
+        try:
+            return Concert.objects.filter(venue_id = venue).order_by("date_time")
+        except Exception as e:
+            raise DatabaseError(e.__class__.__name__ + ": in concert_repo")

@@ -12,6 +12,7 @@ from venue_system.populate_database import populate_database, add_tickets_to_con
 from venue_system.helpers.message import Message
 from venue_system.helpers.errors import TestException, BaseError
 from django.contrib.auth.models import User
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 
@@ -32,27 +33,6 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-class RoleViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.all().order_by("role")
-    serializer_class = RoleSerializer
-    permission_classes = (IsAuthenticated,)
-    @action(detail=False, url_path = "list_roles", url_name="list_roles")
-    def list_roles(self, request):
-
-        message = Message()
-        try:
-            user = request.user
-            print(user.password)
-            queryset = Role.objects.all().order_by("role")
-            serializer = RoleSerializer(queryset, many =True)
-            raise TestException("This is a test Exception")
-            message.add_payload("Successfully retrieved roles", serializer.data)
-
-            return Response(message.response)
-        except BaseError as e:
-            message.add_error(e)
-            return Response(message.response)
-
 
 
 class AdminViewSet(viewsets.ModelViewSet):
@@ -68,3 +48,14 @@ class AdminViewSet(viewsets.ModelViewSet):
         print(len(Ticket.objects.all()))
         # add_tickets_to_concerts()
         return(Response("Done"))
+
+    @action(detail=False, url_path="get_user_type", url_name="get_user_type")
+    def get_user_type(self, request):
+        message = Message()
+        try:
+            message.add_payload("Successfully Retrieved Role", request.user.customuser.role_num.role_num)
+
+            return Response(message.response)
+        except BaseError as e:
+            message.add_error(e)
+            return Response(message.response, status=status.HTTP_400_BAD_REQUEST)

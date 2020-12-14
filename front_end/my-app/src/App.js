@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import MainPage from "./Customer/main.js";
 import LoginPage from "./Login/login";
@@ -6,12 +5,11 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 import React from "react";
-import { CookiesProvider } from 'react-cookie';
 import VenueMainPage from "./Venue/venue_owner";
 import ReserveTicketPage from "./Customer/reserve_ticket";
+import BuyTicketPage from "./Customer/buy_ticket";
 
 export default class App extends React.Component {
 
@@ -24,6 +22,9 @@ export default class App extends React.Component {
           <Switch>
             <Route path="/login">
               <LoginPage />
+            </Route>
+            <Route path="/customer/buy_ticket">
+              <BuyTicketPage/>
             </Route>
             <Route path="/customer/view_tickets">
               <ReserveTicketPage/>
@@ -41,16 +42,5 @@ export default class App extends React.Component {
     );
   }
   
-}
-function Home() {
-  return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
 }
 

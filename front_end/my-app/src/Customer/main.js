@@ -2,13 +2,12 @@ import React from "react";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { Col, Card } from "react-bootstrap";
 import { instanceOf } from "prop-types";
 import { withCookies, Cookies } from "react-cookie";
+import CustNavBar from "../Helpers/Navbar";
 
 class CustomerMainPage extends React.Component {
   static propTypes = {
@@ -16,7 +15,6 @@ class CustomerMainPage extends React.Component {
   };
   constructor(props) {
     super(props);
-    var d = new Date();
     this.state = {
       request: {
         artist_id__band_name: "",
@@ -29,7 +27,9 @@ class CustomerMainPage extends React.Component {
       },
       show_message: false,
       concert_list: [],
+      my_tickets: [],
     };
+    this.getMyTickets()
   }
 
   handleChange = (event) => {
@@ -40,9 +40,7 @@ class CustomerMainPage extends React.Component {
 
   sendRequest = (event) => {
     event.preventDefault();
-
     const path = "/venue_system/customer/find_concerts/";
-    //var url = new URL(path);
     var query_params = new URLSearchParams(this.state.request).toString();
     const { cookies } = this.props;
     fetch(path + "?" + query_params, {
@@ -63,7 +61,7 @@ class CustomerMainPage extends React.Component {
         (result) => {
           console.log(result);
           console.log(Object.keys(result.err).length)
-          if (Object.keys(result.err).length != 0 ) {
+          if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {
             this.setState((state) => ({
@@ -77,9 +75,73 @@ class CustomerMainPage extends React.Component {
       );
   };
 
+  getMyTickets = () => {
+    const path = "/venue_system/customer/get_my_tickets/";
+    const { cookies } = this.props;
+    fetch(path, {
+      method: "GET",
+      headers: {
+        Authorization: "Token " + cookies.get("token"),
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "http://localhost:8000",
+        "Access-Control-Allow-Credentials": true,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then(
+        (result) => {
+          console.log(result);
+          if (Object.keys(result.err).length !== 0 ) {
+            console.log("ERROR");
+          } else {
+            this.setState((state) => ({
+              my_tickets: result.msg.payload
+            }))
+          }
+        },
+        (error) => {
+          //this.setMessage("ERROR sending request", "ERROR");
+        }
+      );
+  };
+
   render() {
+    let tickets = this.state.my_tickets.map((value, index) => {
+      var date_of_concert = new Date(value.concert_id.date_time)
+      var purchased_date = new Date(value.purchased_timestamp)
+      return (
+        <Row key = {value.ticket_id} id= {value.ticket_id}>
+          <Card className="text-center" style={{ width: '100%' }}>
+            <Card.Header>{value.concert_id.concert_name}</Card.Header>
+            <Card.Body>
+              <Card.Title>{value.concert_id.artist_id.band_name} at {value.concert_id.venue_id.venue_name}</Card.Title>
+
+              <Card.Text>
+                Address: {value.concert_id.venue_id.address}
+              </Card.Text>
+              <Card.Text>
+                Doors Open: {date_of_concert.toLocaleTimeString()}
+              </Card.Text>
+              <Card.Text>
+                Purchased: {purchased_date.toLocaleTimeString()}
+              </Card.Text>
+              <Card.Text>
+                Row: {value.seat_row}, Col: {value.seat_col}
+              </Card.Text>
+            </Card.Body>
+            <Card.Footer className="text-muted">{date_of_concert.toDateString()}</Card.Footer>
+          </Card>
+        </Row>
+      );
+    });
+
+
     let concerts = this.state.concert_list.map((value, index) => {
-      var date_of_concert = new Date(Date.parse(value.date_time))
+      var date_of_concert = new Date(value.date_time)
       return (
         <Row key = {value.concert_id} id= {value.concert_id}>
           <Card className="text-center" style={{ width: '100%' }}>
@@ -91,7 +153,7 @@ class CustomerMainPage extends React.Component {
                 Address: {value.venue_id.address}
               </Card.Text>
               <Card.Text>
-                Doors Open: {date_of_concert.getTimezoneOffset()}
+                Doors Open: {date_of_concert.toLocaleTimeString()}
               </Card.Text>
               <Card.Text>
                 Genre: {value.artist_id.genre}
@@ -104,21 +166,11 @@ class CustomerMainPage extends React.Component {
       );
     });
 
+    
+
     return (
       <>
-        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-          <Navbar.Brand href="/about">Venue System</Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="mr-auto">
-              <Nav.Link href="#features">Features</Nav.Link>
-              <Nav.Link href="#pricing">Pricing</Nav.Link>
-            </Nav>
-            <Nav>
-              <Nav.Link href="#deets">Logout</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
+        <CustNavBar />
 
         <Jumbotron>
           <div style={{ justifyContent: "center", textAlign: "center" }}>
@@ -133,6 +185,10 @@ class CustomerMainPage extends React.Component {
           <Row>
             <h1>Your Tickets</h1>
           </Row>
+          <Row style={{maxHeight: 1000, overflowX:"scroll"}}>
+            {tickets}
+          </Row>
+          
           <Row className="h-50">
             <Container fluid>
               <Row>

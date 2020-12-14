@@ -35,3 +35,8 @@ class TicketRepo():
         except Exception as e:
             raise DatabaseError(e.__class__.__name__ + ": in ticket_repo")
 
+    def get_tickets_for_user(self, user):
+        try:
+            return Ticket.objects.all().filter(customer_id=user, credit_card_id__isnull=False).order_by("concert_id__date_time")
+        except Exception as e:
+            raise DatabaseError(e.__class__.__name__ + ": in ticket_repo")

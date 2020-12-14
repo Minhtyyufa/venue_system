@@ -39,3 +39,6 @@ class ConcertService():
         new_params = dict(query_params)
         new_params["start_date"] = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         return self.concert_repo.find_concerts(new_params)
+
+    def get_concerts_by_venue(self, venue):
+        return self.concert_repo.get_concerts_by_venue(venue)
