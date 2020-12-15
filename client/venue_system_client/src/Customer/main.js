@@ -59,8 +59,6 @@ class CustomerMainPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result);
-          console.log(Object.keys(result.err).length)
           if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {
@@ -94,7 +92,6 @@ class CustomerMainPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result);
           if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {

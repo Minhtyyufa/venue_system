@@ -70,7 +70,6 @@ class ReserveTicketPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result)
           if (Object.keys(result.err).length !== 0 ) {
             alert("Sorry that ticket is now unavailable");
             const urlParams = new URLSearchParams(window.location.search);
@@ -106,15 +105,12 @@ class ReserveTicketPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result);
-          console.log(Object.keys(result.err).length)
           if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {
             var tickets = result.msg.payload
             var max_col= Math.max.apply(Math, tickets.map(function(o) { return o.seat_col; }))
             tickets.reshape(max_col, max_col)
-            console.log(tickets);
             this.setState((state) => ({
               tickets: tickets,
             }));

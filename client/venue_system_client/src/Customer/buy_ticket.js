@@ -60,7 +60,6 @@ class BuyTicketPage extends React.Component {
     }
 
     this.setState((state) => ({ request: new_request }));
-    console.log(this.state);
   };
 
   sendRequest = (event) => {
@@ -85,12 +84,9 @@ class BuyTicketPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result);
-          console.log(Object.keys(result.err).length);
           if (Object.keys(result.err).length !== 0) {
             console.log("ERROR");
           } else {
-            console.log("Reserved the ticket");
             alert("Successfully bought the ticket");
           }
         },

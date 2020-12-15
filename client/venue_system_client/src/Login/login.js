@@ -49,7 +49,6 @@ class LoginPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result);
           if (result.token !== null && result.token !== undefined) {
             const { cookies } = this.props;
             cookies.set("token", result["token"], { path: "/" });
@@ -84,7 +83,6 @@ class LoginPage extends React.Component {
       })
       .then(
         (result) => {
-          console.log(result);
           if (Object.keys(result.err).length !== 0) {
             console.log("ERROR");
           } else {

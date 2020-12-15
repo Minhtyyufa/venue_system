@@ -62,7 +62,6 @@ class VenueViewSet(viewsets.ModelViewSet):
             venue = request.user.customuser.venue
 
             concert_data["venue_id"]=venue
-            pprint.pprint(concert_data)
             concert = self.concert_service.create_concert(concert_data)
 
             serializer=ConcertSerializer(concert)

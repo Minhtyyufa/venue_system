@@ -96,5 +96,4 @@ class ConcertTestCase(APITestCase):
         }
         response = self.client.get("/venue_system/customer/find_concerts/", query_data)
 
-        pprint.pprint(response.json())
         self.assertEqual(1, len(response.json()["msg"]["payload"]))
