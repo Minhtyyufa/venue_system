@@ -7,6 +7,6 @@ npm install
 npm start
 ```
 
-This runs the app in the development mode.
+This runs the app in the development mode. \
 Open [http://localhost:3000/login](http://localhost:3000/login) to view it in the browser.
 
