@@ -11,3 +11,12 @@ class InsufficientFieldsException(BaseError):
 
 class WrongAccountTypeException(BaseError):
     pass
+
+class FieldTypeException(BaseError):
+    pass
+
+class DatabaseError(BaseError):
+    pass
+
+class TicketReservedAlreadyError(BaseError):
+    pass
