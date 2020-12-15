@@ -3,9 +3,6 @@ import { withCookies } from "react-cookie";
 import { Navbar, Nav } from "react-bootstrap";
 
 class CustNavBar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   destroyCookie = () => {
     const { cookies } = this.props;

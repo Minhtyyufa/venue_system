@@ -2,8 +2,6 @@ import React from "react";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import { Col, Card } from "react-bootstrap";
@@ -65,7 +63,7 @@ class VenueMainPage extends React.Component {
         (result) => {
           console.log(result);
           console.log(Object.keys(result.err).length)
-          if (Object.keys(result.err).length != 0 ) {
+          if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {
             this.setState((state) => ({
@@ -99,7 +97,7 @@ class VenueMainPage extends React.Component {
       .then(
         (result) => {
           console.log(result);
-          if (Object.keys(result.err).length != 0 ) {
+          if (Object.keys(result.err).length !== 0 ) {
             console.log("ERROR");
           } else {
             this.setState((state) => ({

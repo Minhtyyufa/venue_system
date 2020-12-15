@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Form, Button, Col, Card, Container } from "react-bootstrap";
+import { Navbar, Form, Button, Container } from "react-bootstrap";
 import fetch from "fetch-with-proxy";
 import { instanceOf } from "prop-types";
 import { withCookies, Cookies } from "react-cookie";
@@ -10,7 +10,6 @@ class LoginPage extends React.Component {
   };
   constructor(props) {
     super(props);
-    const { cookies } = props;
     this.state = {
       request: {
         username: "",
@@ -67,7 +66,6 @@ class LoginPage extends React.Component {
 
   redirect = (event) => {
     const { cookies } = this.props;
-    var token = cookies.get("token");
 
     const path = "/venue_system/admin/get_user_type/";
     fetch(path, {
@@ -87,12 +85,12 @@ class LoginPage extends React.Component {
       .then(
         (result) => {
           console.log(result);
-          if (Object.keys(result.err).length != 0) {
+          if (Object.keys(result.err).length !== 0) {
             console.log("ERROR");
           } else {
-            if (result.msg.payload == 2) {
+            if (result.msg.payload === 2) {
               window.location.href = "/";
-            } else if (result.msg.payload == 1) {
+            } else if (result.msg.payload === 1) {
               window.location.href = "/venue_owner";
             } else {
               alert("Sorry Artists haven't been added yet :(");
